@@ -1,10 +1,13 @@
 import argparse
-import browser_cookie3
-import dill
+import pprint
 import json
+
 import requests
+import dill
+import browser_cookie3
 
 ACT_ID = 'e202102251931481'
+LANG = 'en-us'
 DOMAIN_NAME = '.mihoyo.com'
 
 
@@ -19,7 +22,7 @@ def getCookies(browser):
         return None
 
 
-def getStatus(cookies):
+def getStatus(cookies, lang=LANG):
     headers = {
         'Accept': 'application/json, text/plain, */*',
         'Accept-Language': 'vi-VN,vi;q=0.5',
@@ -30,7 +33,7 @@ def getStatus(cookies):
    }
 
     params = (
-        ('lang', 'vi-vn'),
+        ('lang', lang),
         ('act_id', ACT_ID)
     )
 
@@ -44,7 +47,7 @@ def getStatus(cookies):
         return None
 
 
-def claimReward(cookies):
+def claimReward(cookies, lang=LANG):
     headers = {
          'Accept': 'application/json, text/plain, */*',
          'Accept-Language': 'vi-VN,vi;q=0.5',
@@ -55,9 +58,7 @@ def claimReward(cookies):
     }
 
 
-    params = (('lang', 'vi-vn'),)
-
-
+    params = (('lang', lang),)
     json =  { 'act_id': ACT_ID }
 
     try:
@@ -82,7 +83,11 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument("--browser",
         help='Set the browser that you use to claim daily reward\nCurrently only supports Chrome, Firefox and Edge')
+    parser.add_argument("--lang",
+        default='en-us',
+        help='Set language')
     args = parser.parse_args()
+    lang = args.lang
 
     if (args.browser is not None):
         cookies = getCookies(str(args.browser))
@@ -92,6 +97,8 @@ if __name__ == '__main__':
         with open('cookie', 'rb') as file:
             cookies = dill.load(file)
 
-    response = getStatus(cookies)
+    response = getStatus(cookies, lang)
+    pprint.pprint(response)
     if not response['data']['is_sign']:
-        response = claimReward(cookies)
+        response = claimReward(cookies, lang)
+        pprint.pprint(response)
