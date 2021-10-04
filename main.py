@@ -84,7 +84,7 @@ if __name__ == '__main__':
     parser.add_argument("--browser",
         help='Set the browser that you use to claim daily reward\nCurrently only supports Chrome, Firefox and Edge')
     parser.add_argument("--lang",
-        default='en-us',
+        default=LANG,
         help='Set language')
     args = parser.parse_args()
     lang = args.lang

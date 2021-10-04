@@ -2,6 +2,7 @@
 set -e
 
 VALID_BROWSERS='chrome firefox edge'
+VALID_LANGS='zh-cn zh-tw de-de en-us es-es fr-fr id-id ja-jp ko-kr pt-pt th-th vi-vn'
 XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
 contains() {
     echo $1 | grep -Eq "(^|[[:space:]])$2($|[[:space:]])"
@@ -25,17 +26,25 @@ do
     read -p 'Browser (default=chrome): ' browser
     browser=${browser:-chrome}
     browser=$(echo $browser | tr '[:upper:]' '[:lower:]')
-    if contains "$VALID_BROWSERS" $browser ; then
+    if contains "$VALID_BROWSERS" $browser
+    then
         break
     else
-        contains "$VALID_BROWSERS" $browser
-        echo $?
         echo "${RED}$browser${RESET} is not a valid browser ($VALID_BROWSERS).  Try again."
     fi
 done
 
-read -p 'Choose locale (default=en-us): ' locale
-locale=${locale:-en-us}
+while true
+do
+    read -p 'Choose locale (default=en-us): ' locale
+    locale=${locale:-en-us}
+    if contains "$VALID_LANGS" $locale
+    then
+        break
+    else
+        echo "${RED}$locale${RESET} is not a valid locale ($VALID_LANGS).  Try again."
+    fi
+done
 
 echo
 echo "Retreiving $browser cookies"
